@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.yarn/
+src-tauri/target/
+Cargo.lock
+*.pdb
+.DS_Store
