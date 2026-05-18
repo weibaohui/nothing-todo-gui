@@ -1,7 +1,9 @@
 node_modules/
 dist/
 .yarn/
+.vite/
 src-tauri/target/
 Cargo.lock
 *.pdb
 .DS_Store
+.atomcode/

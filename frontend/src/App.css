@@ -1,0 +1,240 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 管理按钮 */
+.manager-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(8px);
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.manager-toggle:hover {
+  background: rgba(51, 65, 85, 0.95);
+  color: #e2e8f0;
+  transform: scale(1.05);
+}
+
+/* 主内容区 */
+.main-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 状态页面 */
+.status-page {
+  text-align: center;
+  max-width: 480px;
+  padding: 40px;
+}
+
+.status-page .icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.status-page h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #f1f5f9;
+}
+
+.status-page p {
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* 安装步骤 */
+.install-steps {
+  text-align: left;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #cbd5e1;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.command-block {
+  display: block;
+  background: #1e293b;
+  color: #7dd3fc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  word-break: break-all;
+}
+
+/* 按钮 */
+.btn-primary {
+  width: 100%;
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background: rgba(51, 65, 85, 0.6);
+  color: #cbd5e1;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(71, 85, 105, 0.6);
+}
+
+.btn-danger {
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.35);
+}
+
+/* Spinner */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(148, 163, 184, 0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Iframe 容器 */
+.iframe-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.ntd-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.iframe-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+  z-index: 10;
+}
+
+.iframe-loading p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* 错误状态 */
+.status-page.error .btn-primary {
+  margin-bottom: 16px;
+}
+
+.status-page .hint {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.status-page .hint code {
+  color: #7dd3fc;
+  background: rgba(30, 41, 59, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.error-actions {
+  text-align: center;
+}

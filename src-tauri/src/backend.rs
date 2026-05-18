@@ -1,10 +1,18 @@
 use std::path::PathBuf;
 use std::process::Command;
+use serde::Serialize;
 use tokio::process::Command as TokioCommand;
 use tokio::time::Duration;
 
 const CONFIG_PATH: &str = "~/.ntd/config.yaml";
 const DEFAULT_PORT: u16 = 8088;
+
+#[derive(Debug, Serialize)]
+pub struct NtdCheckResult {
+    pub installed: bool,
+    pub running: bool,
+    pub port: u16,
+}
 
 pub enum NtdStatus {
     Installed { running: bool, port: u16 },
@@ -20,7 +28,7 @@ fn expand_tilde(path: &str) -> Result<PathBuf, String> {
     }
 }
 
-fn read_port_from_config() -> u16 {
+pub fn read_port_from_config() -> u16 {
     let path = match expand_tilde(CONFIG_PATH) {
         Ok(p) => p,
         Err(_) => return DEFAULT_PORT,
@@ -110,22 +118,79 @@ pub async fn check_ntd_status() -> NtdStatus {
     }
 }
 
+pub async fn get_ntd_check_result() -> NtdCheckResult {
+    match check_ntd_status().await {
+        NtdStatus::NotInstalled => NtdCheckResult {
+            installed: false,
+            running: false,
+            port: read_port_from_config(),
+        },
+        NtdStatus::Installed { running, port } => NtdCheckResult {
+            installed: true,
+            running,
+            port,
+        },
+    }
+}
+
 pub async fn start_ntd_daemon(port: u16) -> Result<u16, String> {
     let ntd_bin = find_ntd_binary().ok_or("ntd binary not found")?;
 
-    TokioCommand::new(&ntd_bin)
+    let child = TokioCommand::new(&ntd_bin)
         .args(["daemon", "start"])
         .spawn()
         .map_err(|e| format!("Failed to spawn ntd daemon: {}", e))?;
+
+    log::info!("ntd daemon spawned, pid: {:?}", child.id());
 
     // Wait for ntd to be ready with health check
     let start = std::time::Instant::now();
     while start.elapsed() < Duration::from_secs(30) {
         if is_port_open(port).await && is_ntd_responding(port).await {
+            log::info!("ntd daemon is ready on port {}", port);
             return Ok(port);
         }
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
 
     Err("ntd daemon failed to start or health check timeout".to_string())
+}
+
+pub async fn stop_ntd_daemon() -> Result<(), String> {
+    let ntd_bin = find_ntd_binary().ok_or("ntd binary not found")?;
+
+    let output = TokioCommand::new(&ntd_bin)
+        .args(["daemon", "stop"])
+        .output()
+        .await
+        .map_err(|e| format!("Failed to stop ntd daemon: {}", e))?;
+
+    if output.status.success() {
+        log::info!("ntd daemon stopped successfully");
+        Ok(())
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        Err(format!("Failed to stop ntd daemon: {}", stderr))
+    }
+}
+
+pub async fn restart_ntd_daemon(port: u16) -> Result<u16, String> {
+    let ntd_bin = find_ntd_binary().ok_or("ntd binary not found")?;
+
+    TokioCommand::new(&ntd_bin)
+        .args(["daemon", "restart"])
+        .spawn()
+        .map_err(|e| format!("Failed to restart ntd daemon: {}", e))?;
+
+    // Wait for ntd to be ready again
+    let start = std::time::Instant::now();
+    while start.elapsed() < Duration::from_secs(30) {
+        if is_port_open(port).await && is_ntd_responding(port).await {
+            log::info!("ntd daemon restarted successfully on port {}", port);
+            return Ok(port);
+        }
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
+
+    Err("ntd daemon restart failed or health check timeout".to_string())
 }

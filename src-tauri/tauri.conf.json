@@ -1,20 +1,22 @@
 {
   "$schema": "https://v2.tauri.app/schemas/config.schema.json",
-  "productName": "ntd",
+  "productName": "NTD",
   "version": "0.1.0",
   "identifier": "com.ntd.desktop",
   "build": {
     "frontendDist": "../frontend/dist",
-    "devUrl": "http://localhost:8088"
+    "devUrl": "http://localhost:1420"
   },
   "app": {
     "windows": [{
-      "title": "ntd - Nothing Todo",
+      "label": "main",
+      "title": "NTD - Nothing Todo",
       "width": 1200,
       "height": 800,
       "minWidth": 900,
       "minHeight": 600,
-      "center": true
+      "center": true,
+      "backgroundColor": "#0f172a"
     }],
     "trayIcon": {
       "iconPath": "icons/icon.png",
